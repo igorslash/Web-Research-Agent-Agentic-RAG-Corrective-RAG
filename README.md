@@ -8,15 +8,13 @@ Production-ready мультишаговый исследовательский �
 
 ## Архитектура графа (LangGraph)
 
-```mermaid
 flowchart TD
-    START((START)) --> planner[<b>planner</b><br/>Декомпозиция запроса на 3–5 подвопросов<br/><i>Structured Output: PlanOutput</i>]
-    planner --> search[<b>search</b><br/>Поиск Tavily API + Async Scraper<br/>Дедупликация URL и очистка HTML]
-    search --> evaluate[<b>evaluate</b><br/>LLM-as-a-Judge: проверка полноты фактов<br/><i>Structured Output: EvaluationOutput</i>]
+    START((START)) --> planner["<b>planner</b><br/>Декомпозиция запроса на 3–5 подвопросов<br/><i>Structured Output: PlanOutput</i>"]
+    planner --> search["<b>search</b><br/>Поиск Tavily API + Async Scraper<br/>Дедупликация URL и очистка HTML"]
+    search --> evaluate["<b>evaluate</b><br/>LLM-as-a-Judge: проверка полноты фактов<br/><i>Structured Output: EvaluationOutput</i>"]
     evaluate -- "is_sufficient == False AND iteration <= 2<br/>(Переформулировка follow-up запросов)" --> search
-    evaluate -- "is_sufficient == True OR iteration == 2" --> writer[<b>writer</b><br/>Генерация Markdown-отчета<br/>с inline-цитатами [1], [2] и References]
+    evaluate -- "is_sufficient == True OR iteration == 2" --> writer["<b>writer</b><br/>Генерация Markdown-отчета<br/>с inline-цитатами [1], [2] и References"]
     writer --> END((END))
-```
 
 ### Ключевые компоненты:
 1. **`planner` (`src/nodes.py`)**: Использует `with_structured_output(PlanOutput)` для генерации 3–5 атомарных, взаимодополняющих подвопросов, покрывающих архитектуру, цифры/бенчмарки и риски.
